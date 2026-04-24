@@ -1,0 +1,2 @@
+ALTER TABLE message
+    ALTER COLUMN text TYPE TEXT;
