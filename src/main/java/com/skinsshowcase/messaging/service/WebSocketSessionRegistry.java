@@ -3,8 +3,8 @@ package com.skinsshowcase.messaging.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skinsshowcase.messaging.dto.MessageResponseDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -16,17 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Реестр WebSocket-сессий по steamId. Потокобезопасный.
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class WebSocketSessionRegistry {
-
-    private static final Logger log = LoggerFactory.getLogger(WebSocketSessionRegistry.class);
 
     private final ObjectMapper objectMapper;
     private final Map<String, WebSocketSession> sessionsBySteamId = new ConcurrentHashMap<>();
-
-    public WebSocketSessionRegistry(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     public void register(String steamId, WebSocketSession session) {
         var previous = sessionsBySteamId.put(steamId, session);
@@ -50,7 +46,7 @@ public class WebSocketSessionRegistry {
         } catch (JsonProcessingException e) {
             log.warn("Failed to serialize message for WebSocket: {}", e.getMessage());
         } catch (IOException e) {
-            log.warn("Failed to send WebSocket message to {}: {}", recipientSteamId, e.getMessage());
+            log.warn("Failed to send WebSocket message: {}", e.getMessage());
         }
     }
 

@@ -2,8 +2,8 @@ package com.skinsshowcase.messaging.service;
 
 import com.skinsshowcase.messaging.client.AuthSessionClient;
 import com.skinsshowcase.messaging.config.MessagingTcpProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -27,10 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * После успешной валидации получает уведомления в формате одной строки на событие:
  * NEW_MESSAGE &lt;senderSteamId&gt; &lt;messageId&gt;
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class TcpNotificationServer {
 
-    private static final Logger log = LoggerFactory.getLogger(TcpNotificationServer.class);
     private static final String CMD_PREFIX = "NEW_MESSAGE ";
     private static final String UTF8 = StandardCharsets.UTF_8.name();
 
@@ -40,14 +41,6 @@ public class TcpNotificationServer {
     private final Map<String, List<ClientConnection>> connectionsBySteamId = new ConcurrentHashMap<>();
     private volatile boolean running;
     private Thread acceptThread;
-
-    public TcpNotificationServer(MessagingTcpProperties tcpProperties,
-                                 JwtSupportService jwtSupportService,
-                                 AuthSessionClient authSessionClient) {
-        this.tcpProperties = tcpProperties;
-        this.jwtSupportService = jwtSupportService;
-        this.authSessionClient = authSessionClient;
-    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void start() {

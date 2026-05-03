@@ -10,6 +10,7 @@ import com.skinsshowcase.messaging.entity.Message;
 import com.skinsshowcase.messaging.exception.UserNotFoundException;
 import com.skinsshowcase.messaging.metrics.MessagingMetrics;
 import com.skinsshowcase.messaging.repository.MessageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
+@RequiredArgsConstructor
 public class MessagingService {
 
     private static final Pattern STEAM_ID_PATTERN = Pattern.compile("^[0-9]{17}$");
@@ -37,20 +39,6 @@ public class MessagingService {
     private final MessagingMetrics messagingMetrics;
     private final MessageCryptoService messageCryptoService;
     private final SteamIdHashingService steamIdHashingService;
-
-    public MessagingService(MessageRepository messageRepository,
-                            MessageNotificationService messageNotificationService,
-                            AuthClient authClient,
-                            MessagingMetrics messagingMetrics,
-                            MessageCryptoService messageCryptoService,
-                            SteamIdHashingService steamIdHashingService) {
-        this.messageRepository = messageRepository;
-        this.messageNotificationService = messageNotificationService;
-        this.authClient = authClient;
-        this.messagingMetrics = messagingMetrics;
-        this.messageCryptoService = messageCryptoService;
-        this.steamIdHashingService = steamIdHashingService;
-    }
 
     /**
      * Сообщение от поддержки пользователю (отправитель — синтетический {@link SupportSyntheticSteamId#VALUE}).
